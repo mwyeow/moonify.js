@@ -87,18 +87,18 @@ run();
 
 `getCurrentlyPlaying(username)` resolves to `null` if nothing is playing or user scrobbles are empty. When active, it returns:
 
-| Field              | Type      | Description                                     |
-| ------------------ | --------- | ----------------------------------------------- |
-| `trackName`        | `string`  | Track name                                      |
-| `artistName`       | `string`  | Artist name                                     |
-| `trackUrl`         | `string`  | Spotify track URL (falls back to Last.fm URL)   |
-| `artistUrl`        | `string`  | Spotify artist URL (falls back to Last.fm URL)  |
-| `lastFmTrackUrl`   | `string`  | Guaranteed Last.fm track URL                    |
-| `lastFmArtistUrl`  | `string`  | Guaranteed Last.fm artist URL                   |
-| `spotifyTrackUrl`  | `string   | null`                                           | Direct Spotify track URL (null if unfound/unconfigured)  |
-| `spotifyArtistUrl` | `string   | null`                                           | Direct Spotify artist URL (null if unfound/unconfigured) |
-| `isOnRepeat`       | `boolean` | `true` if repeated 2+ times in recent 10 tracks |
-| `repeatCount`      | `number`  | Total repeat count in recent tracks             |
+| Field              | Type      | Description                                              |
+| ------------------ | --------- | -------------------------------------------------------- |
+| `trackName`        | `string`  | Track name                                               |
+| `artistName`       | `string`  | Artist name                                              |
+| `trackUrl`         | `string`  | Spotify track URL (falls back to Last.fm URL)            |
+| `artistUrl`        | `string`  | Spotify artist URL (falls back to Last.fm URL)           |
+| `lastFmTrackUrl`   | `string`  | Guaranteed Last.fm track URL                             |
+| `lastFmArtistUrl`  | `string`  | Guaranteed Last.fm artist URL                            |
+| `spotifyTrackUrl`  | `string`  | Direct Spotify track URL (null if unfound/unconfigured)  |
+| `spotifyArtistUrl` | `string`  | Direct Spotify artist URL (null if unfound/unconfigured) |
+| `isOnRepeat`       | `boolean` | `true` if repeated 2+ times in recent 10 tracks          |
+| `repeatCount`      | `number`  | Total repeat count in recent tracks                      |
 
 ## Contributing
 
