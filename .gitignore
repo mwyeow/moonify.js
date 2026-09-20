@@ -1,0 +1,15 @@
+# dependencies
+node_modules/
+bun.lockb
+bun.lock
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+
+# 20 story building
+dist/
+
+# the environment is a bit screwed huh?
+.env
+.env.*
+!.env.example
