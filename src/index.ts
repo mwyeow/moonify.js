@@ -7,6 +7,13 @@ export {
   MoonifyAuthError,
 } from "./errors/index.js";
 export type { MoonifyConfig } from "./types/config.js";
-export type { ResolvedCurrentlyPlaying } from "./types/results.js";
-export type { LastFmRawTrack } from "./types/lastfm.types.js";
+export type {
+  ResolvedCurrentlyPlaying,
+  ResolvedTrackItem,
+  LastFmUserProfile,
+} from "./types/results.js";
+export type {
+  LastFmRawTrack,
+  LastFmUserInfoResponse,
+} from "./types/lastfm.types.js";
 export type { SpotifyTrackMatch } from "./types/spotify.types.js";

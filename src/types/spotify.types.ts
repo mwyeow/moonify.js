@@ -11,10 +11,25 @@ export interface SpotifyArtist {
   };
 }
 
+export interface SpotifyImage {
+  url: string;
+  height: number | null;
+  width: number | null;
+}
+
+export interface SpotifyAlbum {
+  name: string;
+  images: SpotifyImage[];
+  external_urls: {
+    spotify: string;
+  };
+}
+
 export interface SpotifyTrackItem {
   id: string;
   name: string;
   artists: SpotifyArtist[];
+  album: SpotifyAlbum;
   external_urls: {
     spotify: string;
   };
@@ -29,4 +44,6 @@ export interface SpotifySearchTrackResponse {
 export interface SpotifyTrackMatch {
   trackUrl: string | null;
   artistUrl: string | null;
+  albumName: string | null;
+  coverArtUrl: string | null;
 }

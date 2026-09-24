@@ -60,12 +60,23 @@ export class SpotifyService {
     artist: string,
   ): Promise<SpotifyTrackMatch> {
     if (!this.isConfigured) {
-      return { trackUrl: null, artistUrl: null };
+      return {
+        trackUrl: null,
+        artistUrl: null,
+        albumName: null,
+        coverArtUrl: null,
+      };
     }
 
     try {
       const token = await this.getAccessToken();
-      if (!token) return { trackUrl: null, artistUrl: null };
+      if (!token)
+        return {
+          trackUrl: null,
+          artistUrl: null,
+          albumName: null,
+          coverArtUrl: null,
+        };
 
       const query = encodeURIComponent(`track:${track} artist:${artist}`);
       const data = await requestJson<SpotifySearchTrackResponse>(
@@ -78,14 +89,30 @@ export class SpotifyService {
       );
 
       const item = data.tracks?.items?.[0];
-      if (!item) return { trackUrl: null, artistUrl: null };
+      if (!item)
+        return {
+          trackUrl: null,
+          artistUrl: null,
+          albumName: null,
+          coverArtUrl: null,
+        };
+
+      const coverArtUrl = item.album?.images?.[0]?.url || null;
+      const albumName = item.album?.name || null;
 
       return {
         trackUrl: item.external_urls?.spotify || null,
         artistUrl: item.artists?.[0]?.external_urls?.spotify || null,
+        albumName,
+        coverArtUrl,
       };
     } catch {
-      return { trackUrl: null, artistUrl: null };
+      return {
+        trackUrl: null,
+        artistUrl: null,
+        albumName: null,
+        coverArtUrl: null,
+      };
     }
   }
 }

@@ -11,22 +11,30 @@
   <img src="https://img.shields.io/badge/license-MIT-green.svg" alt="License" />
 </p>
 
-A lightweight TypeScript client to fetch currently playing scrobbles from Last.fm and automatically enrich them with Spotify track links, artist URLs, and repeat tracking.
+A lightweight TypeScript client for Last.fm and Spotify, providing scrobble history, user profiles, track information, artwork, and links in one simple package.
 
 ---
 
 ## Features
 
-- Fetches live playback status via Last.fm API.
-- Automatically searches Spotify for track and artist links.
-- Gracefully falls back to Last.fm URLs if Spotify credentials are unset or the track is not found.
-- Detects whether the current track is on repeat across the user's latest scrobbles.
-- Zero external runtime dependencies (uses native web APIs: `fetch`, `AbortController`, `btoa`).
-- Works across Node.js (18+), Bun, and Deno.
+- Fetches live playback status via the Last.fm API.
+- Searches Spotify for track links, artist URLs, album names, and cover art.
+- Falls back to Last.fm artwork and URLs when needed.
+- Resolves recent scrobbles with customisable limits and playback flags.
+- Retrieves Last.fm user profiles.
+- Detects whether the current track is on repeat.
+- Zero external runtime dependencies.
+- Works with Node.js 18+, Bun, and Deno.
+-
 
 ---
 
 ## Installation
+
+### API Keys
+
+- **Last.fm:** Get your API key and secret from the [Last.fm API account page](https://www.last.fm/api/account/create).
+- **Spotify:** Create an app in the [Spotify Developer Dashboard](https://developer.spotify.com/dashboard) to get your Client ID and Client Secret.
 
 ```bash
 # using bun
@@ -37,7 +45,6 @@ npm install @mwyeow/moonify.js
 
 # using pnpm
 pnpm add @mwyeow/moonify.js
-
 ```
 
 ---
@@ -45,7 +52,7 @@ pnpm add @mwyeow/moonify.js
 ## Quick Start
 
 ```typescript
-import { Moonify } from "moonify.js";
+import { Moonify } from "@mwyeow/moonify.js";
 
 const moonify = new Moonify({
   lastfmApiKey: process.env.LASTFM_API_KEY!,
@@ -55,18 +62,34 @@ const moonify = new Moonify({
 });
 
 async function run() {
-  const result = await moonify.getCurrentlyPlaying("some_username");
+  // fetch currently playing track
+  const current = await moonify.getCurrentlyPlaying("some_username");
 
-  if (!result) {
-    console.log("No track is playing right now.");
-    return;
+  if (current) {
+    console.log(`${current.trackName} by ${current.artistName}`);
+    console.log(`Album: ${current.albumName}`);
+    console.log(`Cover Art: ${current.coverArtUrl}`);
+    console.log(`Listen: ${current.trackUrl}`);
+
+    if (current.isOnRepeat) {
+      console.log(`Repeated ${current.repeatCount} times recently.`);
+    }
   }
 
-  console.log(`${result.trackName} by ${result.artistName}`);
-  console.log(`Listen here: ${result.trackUrl}`);
+  // fetch recent scrobbles
+  const recents = await moonify.getRecentTracks("some_username", 5);
+  for (const track of recents) {
+    console.log(
+      `${track.trackName} - ${track.artistName} (Playing: ${track.isPlaying})`,
+    );
+  }
 
-  if (result.isOnRepeat) {
-    console.log(`Repeated ${result.repeatCount} times recently.`);
+  // fetch user profile
+  const profile = await moonify.getUserProfile("some_username");
+  if (profile) {
+    console.log(
+      `${profile.username} has ${profile.playCount.toLocaleString()} total scrobbles`,
+    );
   }
 }
 
@@ -75,22 +98,63 @@ run();
 
 ---
 
-## Response Object
+## Reference
 
-`getCurrentlyPlaying(username)` resolves to `null` if nothing is playing or user scrobbles are empty. When active, it returns:
+### `moonify.getCurrentlyPlaying(username)`
 
-| Field              | Type      | Description                                              |
-| ------------------ | --------- | -------------------------------------------------------- |
-| `trackName`        | `string`  | Track name                                               |
-| `artistName`       | `string`  | Artist name                                              |
-| `trackUrl`         | `string`  | Spotify track URL (falls back to Last.fm URL)            |
-| `artistUrl`        | `string`  | Spotify artist URL (falls back to Last.fm URL)           |
-| `lastFmTrackUrl`   | `string`  | Guaranteed Last.fm track URL                             |
-| `lastFmArtistUrl`  | `string`  | Guaranteed Last.fm artist URL                            |
-| `spotifyTrackUrl`  | `string`  | Direct Spotify track URL (null if unfound/unconfigured)  |
-| `spotifyArtistUrl` | `string`  | Direct Spotify artist URL (null if unfound/unconfigured) |
-| `isOnRepeat`       | `boolean` | `true` if repeated 2+ times in recent 10 tracks          |
-| `repeatCount`      | `number`  | Total repeat count in recent tracks                      |
+Resolves to `null` if nothing is playing or if the user's scrobble history is empty. When active, it returns:
+
+| Field              | Type      | Description                                                     |
+| ------------------ | --------- | --------------------------------------------------------------- |
+| `trackName`        | `string`  | Track name                                                      |
+| `artistName`       | `string`  | Artist name                                                     |
+| `albumName`        | `string`  | Spotify album title (falls back to Last.fm album)               |
+| `coverArtUrl`      | `string`  | Spotify high-resolution cover art (falls back to Last.fm image) |
+| `trackUrl`         | `string`  | Spotify track URL (falls back to Last.fm URL)                   |
+| `artistUrl`        | `string`  | Spotify artist URL (falls back to Last.fm URL)                  |
+| `lastFmTrackUrl`   | `string`  | Last.fm track URL                                               |
+| `lastFmArtistUrl`  | `string`  | Last.fm artist URL                                              |
+| `spotifyTrackUrl`  | `string`  | Direct Spotify track URL                                        |
+| `spotifyArtistUrl` | `string`  | Direct Spotify artist URL                                       |
+| `isOnRepeat`       | `boolean` | `true` if repeated 2+ times in recent tracks                    |
+| `repeatCount`      | `number`  | Total repeat occurrences in recent scrobbles                    |
+
+---
+
+### `moonify.getRecentTracks(username, limit?)`
+
+Retrieves an array of recent scrobbles up to the specified `limit` (default: `5`), fully enriched with artwork, album metadata, and playback states:
+
+| Field              | Type      | Description                                                     |
+| ------------------ | --------- | --------------------------------------------------------------- |
+| `trackName`        | `string`  | Track name                                                      |
+| `artistName`       | `string`  | Artist name                                                     |
+| `albumName`        | `string`  | Spotify album title (falls back to Last.fm album)               |
+| `coverArtUrl`      | `string`  | Spotify high-resolution cover art (falls back to Last.fm image) |
+| `trackUrl`         | `string`  | Spotify track URL (falls back to Last.fm URL)                   |
+| `artistUrl`        | `string`  | Spotify artist URL (falls back to Last.fm URL)                  |
+| `lastFmTrackUrl`   | `string`  | Last.fm track URL                                               |
+| `lastFmArtistUrl`  | `string`  | Last.fm artist URL                                              |
+| `spotifyTrackUrl`  | `string`  | Direct Spotify track URL                                        |
+| `spotifyArtistUrl` | `string`  | Direct Spotify artist URL                                       |
+| `isPlaying`        | `boolean` | `true` if this track is actively scrobbling right now           |
+
+---
+
+### `moonify.getUserProfile(username)`
+
+Resolves user profile details and scrobble statistics via Last.fm's `user.getinfo` endpoint. Returns `null` if the user is not found:
+
+| Field          | Type     | Description                         |
+| -------------- | -------- | ----------------------------------- |
+| `username`     | `string` | Last.fm username                    |
+| `url`          | `string` | Profile URL on Last.fm              |
+| `avatarUrl`    | `string` | High-resolution avatar URL          |
+| `country`      | `string` | Country listed on profile           |
+| `playCount`    | `number` | Total lifetime scrobble count       |
+| `registeredAt` | `number` | Account registration Unix timestamp |
+
+---
 
 ## Contributing
 

@@ -2,6 +2,7 @@ import { requestJson } from "../http/fetcher.js";
 import {
   LastFmRawTrack,
   LastFmRecentTracksResponse,
+  LastFmUserInfoResponse,
 } from "../types/lastfm.types.js";
 
 export class LastFmService {
@@ -29,5 +30,19 @@ export class LastFmService {
     if (!raw) return [];
 
     return Array.isArray(raw) ? raw : [raw];
+  }
+
+  public async getUserInfo(
+    username: string,
+  ): Promise<LastFmUserInfoResponse["user"] | null> {
+    const url = `https://ws.audioscrobbler.com/2.0/?method=user.getinfo&user=${encodeURIComponent(
+      username,
+    )}&api_key=${this.apiKey}&format=json`;
+
+    const data = await requestJson<LastFmUserInfoResponse>("lastfm", url, {
+      timeoutMs: this.timeoutMs,
+    });
+
+    return data.user || null;
   }
 }

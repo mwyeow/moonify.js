@@ -13,31 +13,24 @@ if (!username) {
   process.exit(1);
 }
 
-const moonify = new Moonify({
-  lastfmApiKey: apiKey,
-  spotifyClientId: process.env.SPOTIFY_CLIENT_ID,
-  spotifyClientSecret: process.env.SPOTIFY_CLIENT_SECRET,
-});
-
-async function run() {
-  console.log(`Checking now playing for ${username}...`);
-  const res = await moonify.getCurrentlyPlaying(username);
-
-  if (!res) {
-    console.log(
-      "No track is currently playing (that or user scrobbles are empty).",
-    );
-    return;
-  }
-
-  console.log("Result:", {
-    track: res.trackName,
-    artist: res.artistName,
-    trackUrl: res.trackUrl,
-    artistUrl: res.artistUrl,
-    isOnRepeat: res.isOnRepeat,
-    repeatCount: res.repeatCount,
+(async () => {
+  const moonify = new Moonify({
+    lastfmApiKey: apiKey!,
+    spotifyClientId: process.env.SPOTIFY_CLIENT_ID,
+    spotifyClientSecret: process.env.SPOTIFY_CLIENT_SECRET,
   });
-}
 
-run().catch(console.error);
+  console.log("Profile:");
+  const profile = await moonify.getUserProfile(username);
+  console.dir(profile, { depth: null, colors: true });
+
+  console.log("\nCurrently Playing:");
+  const current = await moonify.getCurrentlyPlaying(username);
+  console.dir(current, { depth: null, colors: true });
+
+  console.log("\nRecent Tracks:");
+  const recents = await moonify.getRecentTracks(username, 4);
+  console.dir(recents, { depth: null, colors: true });
+})().catch(console.error);
+
+export {};
