@@ -38,13 +38,13 @@ A lightweight TypeScript client to fetch currently playing scrobbles from Last.f
 
 ```bash
 # using bun
-bun add moonify.js
+bun add @mwyeow/moonify.js
 
 # using npm
-npm install moonify.js
+npm install @mwyeow/moonify.js
 
 # using pnpm
-pnpm add moonify.js
+pnpm add @mwyeow/moonify.js
 
 ```
 
