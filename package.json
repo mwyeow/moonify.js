@@ -1,5 +1,5 @@
 {
-  "name": "moonify.js",
+  "name": "@mwyeow/moonify.js",
   "version": "1.0.0",
   "description": "Resolve Last.fm currently playing track and enrich with Spotify metadata",
   "type": "module",

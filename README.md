@@ -4,11 +4,11 @@
   <a href="https://discord.gg/Bjgx9gaaHG">
     <img src="https://img.shields.io/discord/1338630753512325242?color=5865F2&logo=discord&logoColor=white" alt="Discord" />
   </a>
-  <a href="https://www.npmjs.com/package/moonify.js">
-    <img src="https://img.shields.io/npm/v/moonify.js?color=CB3837&logo=npm" alt="npm version" />
+  <a href="https://www.npmjs.com/package/@mwyeow/moonify.js">
+    <img src="https://img.shields.io/npm/v/@mwyeow/moonify.js?color=CB3837&logo=npm" alt="npm version" />
   </a>
-  <a href="https://www.npmjs.com/package/moonify.js">
-    <img src="https://img.shields.io/npm/dt/moonify.js?color=blue" alt="npm downloads" />
+  <a href="https://www.npmjs.com/package/@mwyeow/moonify.js">
+    <img src="https://img.shields.io/npm/dt/@mwyeow/moonify.js?color=blue" alt="npm downloads" />
   </a>
   <a href="https://github.com/mwyeow/moonify.js/graphs/contributors">
     <img src="https://img.shields.io/github/contributors/mwyeow/moonify.js?color=teal" alt="Contributors" />
